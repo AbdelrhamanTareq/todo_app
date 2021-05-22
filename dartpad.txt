@@ -31,11 +31,13 @@ mainAxisAlignment:MainAxisAlignment.start,
      
 Expanded(flex:2,child:Container(color:Colors.red,child:Column(
   crossAxisAlignment :CrossAxisAlignment.start,
-  mainAxisAlignment:MainAxisAlignment.center,
+//   mainAxisAlignment:MainAxisAlignment.center,
   children:[
-  Text('Your Things'),
+    Expanded(child: Container(alignment:Alignment.centerLeft,child: Text('Your Things'))),
+          Expanded(child: Container(alignment: Alignment.bottomCenter, child: Text('Second'))),
+//   Text('Your Things'),
     
-  Text('Second'),
+//   Text('Second'),
 ],
                                                              ),),),
       Expanded(flex:1,child:Container(color:Colors.green,child:Text('adasd'),),),
