@@ -1,0 +1,47 @@
+import 'package:flutter/material.dart';
+
+final Color darkBlue = Color.fromARGB(255, 18, 32, 47);
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body:  MyWidget(),
+      ),
+    );
+  }
+}
+
+class MyWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+    height:250,width:double.infinity,color:Colors.blueAccent,
+    child: Row(
+      crossAxisAlignment :CrossAxisAlignment.start,
+mainAxisAlignment:MainAxisAlignment.start,
+    children:[
+     
+Expanded(flex:2,child:Container(color:Colors.red,child:Column(
+  crossAxisAlignment :CrossAxisAlignment.start,
+  mainAxisAlignment:MainAxisAlignment.center,
+  children:[
+  Text('Your Things'),
+    
+  Text('Second'),
+],
+                                                             ),),),
+      Expanded(flex:1,child:Container(color:Colors.green,child:Text('adasd'),),),
+      
+    ],
+    )
+    );
+  }
+}
