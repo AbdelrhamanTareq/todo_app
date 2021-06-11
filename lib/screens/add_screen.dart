@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/screens/setting_screen.dart';
 
 import '../providers/database.dart';
 
@@ -26,6 +27,7 @@ class _AddScreenState extends State<AddScreen> {
         place: place,
         time: time,
         date: date,
+        icon: shownIcon.codePoint,
       );
       Navigator.of(context).pop();
     }
@@ -51,7 +53,16 @@ class _AddScreenState extends State<AddScreen> {
     );
   }
 
-  String category = '';
+  List<IconData> icons = [
+    Icons.sports_soccer_rounded,
+    Icons.music_note,
+    Icons.design_services_sharp,
+    Icons.timeline
+  ];
+
+  IconData shownIcon = Icons.sports_soccer_rounded;
+
+  String category = 'Personal';
 
   List<String> categories = [
     "Personal",
@@ -78,7 +89,13 @@ class _AddScreenState extends State<AddScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 10),
               child: IconButton(
-                  icon: Icon(Icons.settings_applications), onPressed: () {}),
+                  icon: Icon(Icons.dashboard_customize),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SettingScreen()),
+                    );
+                  }),
             )
           ],
         ),
@@ -91,12 +108,41 @@ class _AddScreenState extends State<AddScreen> {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.grey,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.grey,
+                      ),
+                      color: Colors.deepPurple),
+                  child: Center(
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                        value: shownIcon,
+                        style: TextStyle(color: Colors.white),
+                        iconSize: 0.0,
+                        dropdownColor: Colors.black87,
+                        elevation: 16,
+                        onChanged: (newValue) {
+                          setState(() {
+                            shownIcon = newValue;
+
+                            print(newValue);
+                          });
+                        },
+                        items: icons.map((value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Icon(
+                              value,
+                              color: Colors.cyan,
+                              size: 35,
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
-                  child: Icon(Icons.inbox_sharp, color: Colors.cyan),
+
+                  //  Icon(Icons.inbox_sharp, color: Colors.cyan),
                 ),
               ),
               SizedBox(height: 50),
@@ -137,7 +183,6 @@ class _AddScreenState extends State<AddScreen> {
                               ),
                             );
                           }).toList(),
-                          // onSaved: (val) => setState(() => _user.typeNeg = val),
                         ),
                         textField(
                             controller: _titleController,

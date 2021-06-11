@@ -6,7 +6,7 @@ class DatabaseHelper with ChangeNotifier {
 
   List<Map> tasks = [];
 
-  void createDatabase() async {
+  Future createDatabase() async {
     database = await openDatabase(
       'todo.db',
       version: 2,
@@ -14,7 +14,7 @@ class DatabaseHelper with ChangeNotifier {
         print('Database Created');
         database
             .execute(
-                'CREATE TABLE tasks (id INTEGER PRIMARY KEY, category TEXT,title TEXT, place TEXT, time TEXT, date TEXT)')
+                'CREATE TABLE tasks (id INTEGER PRIMARY KEY, category TEXT,title TEXT, place TEXT, time TEXT, date TEXT, complete INTEGER, icon INTEGER)')
             .then((value) {
           print('table created');
         }).catchError((error) {
@@ -22,12 +22,7 @@ class DatabaseHelper with ChangeNotifier {
         });
       },
       onOpen: (database) {
-        getDatabase(database).then((value) {
-          tasks = value;
-          print(tasks);
-          notifyListeners();
-          // print(tasks[0]['date']);
-        });
+        getDatabase(database);
         print('Database opened');
       },
     );
@@ -40,27 +35,78 @@ class DatabaseHelper with ChangeNotifier {
     @required String place,
     @required String time,
     @required String date,
+    @required int icon,
   }) async {
     return await database.transaction((txn) {
       txn
           .rawInsert(
-              'insert into tasks(category,title,place,time,date) values ("$cat","$title","$place","$time","$date")')
+              'insert into tasks(category,title,place,time,date,complete,icon) values ("$cat","$title","$place","$time","$date",0,$icon)')
           .then((value) {
         print('$value is inserted');
-        getDatabase(database).then((value) {
-          tasks = value;
-          print(tasks);
-          // notifyListeners();
-          // print(tasks[0]['date']);
-        });
+        getDatabase(database);
       }).catchError((error) => print('error + $error.toString()'));
       notifyListeners();
       return null;
     });
   }
 
-  Future<List<Map>> getDatabase(Database database) async {
+  void getDatabase(Database database) {
+    database.rawQuery('SELECT * FROM tasks').then((value) {
+      tasks = value;
+      print('tasks = $tasks');
+      notifyListeners();
+      // print(tasks[0]['date']);
+    });
+
     notifyListeners();
-    return await database.rawQuery('SELECT * FROM tasks');
+  }
+
+  Future<int> getCategoryCount({String catName}) async {
+    var x = await database
+        .rawQuery("SELECT COUNT (*) from tasks where category = '$catName'");
+    int count = Sqflite.firstIntValue(x);
+    // print('c = $count ');
+    // print('+ x = $x ');
+    return count;
+  }
+
+  Future<void> updateDatabase(int id) async {
+    int updated = await database.rawUpdate(
+      'UPDATE tasks SET complete = ? WHERE id = ?',
+      [
+        1,
+        id,
+      ],
+    );
+    print('update = $updated');
+    notifyListeners();
+  }
+
+  Future<int> getCompleteCount() async {
+    var x = await database
+        .rawQuery("SELECT COUNT (*) from tasks where complete = 1 ");
+    int count = Sqflite.firstIntValue(x);
+    // double finalCount = count * 0.1;
+    print('count complete tasks = $count');
+
+    return count;
+  }
+
+  Future<int> getTasksCount() async {
+    var x = await database.rawQuery("SELECT COUNT (*) from tasks");
+    int count = Sqflite.firstIntValue(x);
+    print('count all tasks = $count');
+    return count;
+  }
+
+  Future<double> getCompletePrecntage() async {
+    int x = await getCompleteCount();
+    int y = await getTasksCount();
+    double z = x / y;
+    // if (y == 0) {
+    //   return 1.0;
+    // }
+    print(z);
+    return z;
   }
 }
