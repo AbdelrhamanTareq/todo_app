@@ -103,10 +103,16 @@ class DatabaseHelper with ChangeNotifier {
     int x = await getCompleteCount();
     int y = await getTasksCount();
     double z = x / y;
-    // if (y == 0) {
-    //   return 1.0;
-    // }
+    if (y == 0 || x == 0) {
+      return 0.0;
+    }
     print(z);
     return z;
+  }
+
+  void deleteTask(int id) {
+    database.rawDelete('DELETE FROM tasks WHERE id = ?', [id]);
+    getDatabase(database);
+    notifyListeners();
   }
 }

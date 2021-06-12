@@ -14,14 +14,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  @override
+  bool isUpdate = false;
+  int _selectedIndex = 0;
+  _onSelected(index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     print('le ${Provider.of<DatabaseHelper>(context).tasks.length}');
-    // var tasks = Provider.of<DatabaseHelper>(context).tasks;
+
     final providr = Provider.of<DatabaseHelper>(context);
-    // var x = Provider.of<DatabaseHelper>(context).getCompleteCount();
-    // double precent ;
+
     return Scaffold(
       key: _scaffoldKey,
       drawer: Drawer(),
@@ -202,17 +208,62 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Container(
-              height: MediaQuery.of(context).size.height * 0.60,
-              child: ListView.separated(
-                shrinkWrap: true,
-                // physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (ctx, i) => InkWell(
+            height: MediaQuery.of(context).size.height * 0.60,
+            child: ListView.separated(
+              shrinkWrap: true,
+              // physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (ctx, i) => Dismissible(
+                key: UniqueKey(),
+                background: Container(
+                  color: Theme.of(context).errorColor,
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                  alignment: Alignment.centerRight,
+                  padding: EdgeInsets.only(right: 20),
+                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+                ),
+                onDismissed: (dirction) {
+                  providr.deleteTask(providr.tasks[i]['id']);
+                },
+                direction: DismissDirection.startToEnd,
+                confirmDismiss: (direction) {
+                  return showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: Text('Are you sure'),
+                      content: Text('Do you want to remove this task?'),
+                      actions: [
+                        TextButton(
+                          child: Text('No'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: Text('Yes'),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: InkWell(
                   onTap: () {
                     Provider.of<DatabaseHelper>(context, listen: false)
                         .updateDatabase(providr.tasks[i]['id']);
+                    _onSelected(i);
                     print('ink tapped');
                   },
                   child: ListTile(
+                    // tileColor: _selectedIndex != null && _selectedIndex == i
+                    //     ? Colors.yellowAccent
+                    //     : Colors.white,
+                    // key: providr.tasks[i]['id'],
                     leading: Container(
                       width: 50,
                       height: 50,
@@ -241,10 +292,22 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
+
+                  // (_selectedIndex == i)
+                  //     ? Padding(
+                  //         padding: const EdgeInsets.all(8.0),
+                  //         child: Divider(
+                  //           color: Colors.grey,
+                  //           thickness: 1,
+                  //         ),
+                  //       )
+                  //     : Container()
                 ),
-                separatorBuilder: (ctx, i) => Divider(),
-                itemCount: providr.tasks.length,
-              )),
+              ),
+              separatorBuilder: (ctx, i) => Divider(thickness: 1),
+              itemCount: providr.tasks.length,
+            ),
+          ),
           Container(
             padding: EdgeInsets.only(top: 10, left: 10),
             width: double.infinity,
@@ -283,3 +346,35 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+// Dismissible(
+                    
+                    
+//                     onDismissed: (dirction) {
+//                       providr.deleteTask(providr.tasks[i]['id']);
+//                     },
+//                     direction: DismissDirection.startToEnd,
+//                     confirmDismiss: (direction) {
+//                       return showDialog(
+//                         context: context,
+//                         builder: (ctx) => AlertDialog(
+//                           title: Text('Are you sure'),
+//                           content: Text('Do you want to remove this task?'),
+//                           actions: [
+//                             TextButton(
+//                               child: Text('No'),
+//                               onPressed: () {
+//                                 Navigator.of(context).pop();
+//                               },
+//                             ),
+//                             TextButton(
+//                               child: Text('Yes'),
+//                               onPressed: () {
+//                                 Navigator.of(context).pop(true);
+//                               },
+//                             ),
+//                           ],
+//                         ),
+//                       );
+//                     },
+                    
