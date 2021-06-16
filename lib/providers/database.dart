@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper with ChangeNotifier {
   Database database;
 
   List<Map> tasks = [];
+  List<Map> doneTasks = [];
 
   Future createDatabase() async {
     database = await openDatabase(
@@ -14,7 +16,7 @@ class DatabaseHelper with ChangeNotifier {
         print('Database Created');
         database
             .execute(
-                'CREATE TABLE tasks (id INTEGER PRIMARY KEY, category TEXT,title TEXT, place TEXT, time TEXT, date TEXT, complete INTEGER, icon INTEGER)')
+                'CREATE TABLE tasks (id INTEGER PRIMARY KEY, category TEXT,title TEXT, place TEXT, time TEXT, date TEXT, complete INTEGER, icon INTEGER, status Text)')
             .then((value) {
           print('table created');
         }).catchError((error) {
@@ -23,6 +25,7 @@ class DatabaseHelper with ChangeNotifier {
       },
       onOpen: (database) {
         getDatabase(database);
+        getDoneDatabase(database);
         print('Database opened');
       },
     );
@@ -40,10 +43,11 @@ class DatabaseHelper with ChangeNotifier {
     return await database.transaction((txn) {
       txn
           .rawInsert(
-              'insert into tasks(category,title,place,time,date,complete,icon) values ("$cat","$title","$place","$time","$date",0,$icon)')
+              'insert into tasks(category,title,place,time,date,complete,icon,status) values ("$cat","$title","$place","$time","$date",0,$icon,"All")')
           .then((value) {
         print('$value is inserted');
         getDatabase(database);
+        getDoneDatabase(database);
       }).catchError((error) => print('error + $error.toString()'));
       notifyListeners();
       return null;
@@ -51,11 +55,28 @@ class DatabaseHelper with ChangeNotifier {
   }
 
   void getDatabase(Database database) {
-    database.rawQuery('SELECT * FROM tasks').then((value) {
+    database
+        .rawQuery('SELECT * FROM tasks WHERE status = "All" ORDER BY id DESC')
+        .then((value) {
       tasks = value;
       print('tasks = $tasks');
       notifyListeners();
       // print(tasks[0]['date']);
+    });
+
+    notifyListeners();
+  }
+
+  void getDoneDatabase(Database database) {
+    doneTasks = [];
+    database
+        .rawQuery('SELECT * FROM tasks WHERE status = "Done" ORDER BY id DESC')
+        .then((value) {
+      doneTasks = value;
+
+      notifyListeners();
+      print('done $doneTasks ');
+      print('done length ${doneTasks.length} ');
     });
 
     notifyListeners();
@@ -70,16 +91,54 @@ class DatabaseHelper with ChangeNotifier {
     return count;
   }
 
-  Future<void> updateDatabase(int id) async {
+  Future<void> updateDatabase(
+    int id,
+  ) async {
     int updated = await database.rawUpdate(
-      'UPDATE tasks SET complete = ? WHERE id = ?',
+      'UPDATE tasks SET complete = ?, status = ? WHERE id = ?',
       [
         1,
+        "Done",
         id,
       ],
     );
+    getDatabase(database);
+    getDoneDatabase(database);
     print('update = $updated');
     notifyListeners();
+    // if (isClicked == false) {
+    //   int updated = await database.rawUpdate(
+    //     'UPDATE tasks SET complete = ? WHERE id = ?',
+    //     [
+    //       1,
+    //       id,
+    //     ],
+    //   );
+    //   getDatabase(database);
+    //   notifyListeners();
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //         content: Container(
+    //       child: Text('Task Completed'),
+    //     )),
+    //   );
+    // } else {
+    //   int updated = await database.rawUpdate(
+    //     'UPDATE tasks SET complete = ? WHERE id = ?',
+    //     [
+    //       0,
+    //       id,
+    //     ],
+    //   );
+    //   getDatabase(database);
+    //   notifyListeners();
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //         content: Container(
+    //       child: Text('Task UnCompleted'),
+    //     )),
+    //   );
+    // }
   }
 
   Future<int> getCompleteCount() async {
@@ -113,6 +172,7 @@ class DatabaseHelper with ChangeNotifier {
   void deleteTask(int id) {
     database.rawDelete('DELETE FROM tasks WHERE id = ?', [id]);
     getDatabase(database);
+    getDoneDatabase(database);
     notifyListeners();
   }
 }

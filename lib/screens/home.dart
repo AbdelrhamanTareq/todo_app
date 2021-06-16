@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:todo_app/screens/done_screen.dart';
 
 import '../screens/add_screen.dart';
 import '../providers/database.dart';
@@ -14,12 +15,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  bool isUpdate = false;
-  int _selectedIndex = 0;
-  _onSelected(index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+
+  _onSelected(
+    int id,
+  ) {
+    Provider.of<DatabaseHelper>(context, listen: false).updateDatabase(id);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Container(
+          child: Text('Done'),
+        ),
+      ),
+    );
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    print('tappppppppppp');
   }
 
   @override
@@ -30,7 +39,25 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: Drawer(),
+      drawer: Drawer(
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 100, horizontal: 20),
+          child: Column(
+            children: [
+              ListTile(
+                leading: Icon(Icons.done_rounded),
+                title: Text('Done'),
+                onTap: () {
+                  // to close Drawer when back to home Screen
+                  Navigator.pop(context);
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (ctx) => DoneScreen()));
+                },
+              )
+            ],
+          ),
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
@@ -208,106 +235,101 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.60,
-            child: ListView.separated(
-              shrinkWrap: true,
-              // physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (ctx, i) => Dismissible(
-                key: UniqueKey(),
-                background: Container(
-                  color: Theme.of(context).errorColor,
-                  child: Icon(
-                    Icons.delete,
-                    color: Colors.white,
-                    size: 40,
+              height: MediaQuery.of(context).size.height * 0.60,
+              child: ListView.separated(
+                // reverse: true,
+                padding: EdgeInsets.all(2),
+
+                shrinkWrap: true,
+                // physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (ctx, i) => Dismissible(
+                  key: UniqueKey(),
+                  background: Container(
+                    color: Theme.of(context).errorColor,
+                    child: Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.only(right: 20),
+                    // margin: EdgeInsets.symmetric(horizontal: 1, vertical: 0),
                   ),
-                  alignment: Alignment.centerRight,
-                  padding: EdgeInsets.only(right: 20),
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-                ),
-                onDismissed: (dirction) {
-                  providr.deleteTask(providr.tasks[i]['id']);
-                },
-                direction: DismissDirection.startToEnd,
-                confirmDismiss: (direction) {
-                  return showDialog(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: Text('Are you sure'),
-                      content: Text('Do you want to remove this task?'),
-                      actions: [
-                        TextButton(
-                          child: Text('No'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        TextButton(
-                          child: Text('Yes'),
-                          onPressed: () {
-                            Navigator.of(context).pop(true);
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: InkWell(
-                  onTap: () {
-                    Provider.of<DatabaseHelper>(context, listen: false)
-                        .updateDatabase(providr.tasks[i]['id']);
-                    _onSelected(i);
-                    print('ink tapped');
+                  onDismissed: (dirction) {
+                    providr.deleteTask(providr.tasks[i]['id']);
                   },
-                  child: ListTile(
-                    // tileColor: _selectedIndex != null && _selectedIndex == i
-                    //     ? Colors.yellowAccent
-                    //     : Colors.white,
-                    // key: providr.tasks[i]['id'],
-                    leading: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 0.5),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        IconData(providr.tasks[i]['icon'],
-                            fontFamily: 'MaterialIcons'),
-                      ),
-                    ),
-                    title: Text(providr.tasks[i]['title']),
-                    subtitle: Text(providr.tasks[i]['place']),
-                    trailing: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(providr.tasks[i]['time']),
-                          SizedBox(
-                            height: 5,
+                  direction: DismissDirection.endToStart,
+                  confirmDismiss: (direction) {
+                    return showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: Text('Are you sure'),
+                        content: Text('Do you want to remove this task?'),
+                        actions: [
+                          TextButton(
+                            child: Text('No'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
                           ),
-                          Text(providr.tasks[i]['date']),
+                          TextButton(
+                            child: Text('Yes'),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                          ),
                         ],
                       ),
+                    );
+                  },
+                  child: InkWell(
+                    onTap: () {
+                      _onSelected(providr.tasks[i]['id']);
+                      print('ink tapped');
+                    },
+                    child: ListTile(
+                      // tileColor: providr.tasks[i]['complete'] == 1
+                      //     ? Colors.green
+                      //     : Colors.white10,
+                      leading: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 0.5),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          IconData(providr.tasks[i]['icon'],
+                              fontFamily: 'MaterialIcons'),
+                        ),
+                      ),
+                      title: Text(providr.tasks[i]['title']),
+                      subtitle: Text(providr.tasks[i]['place']),
+                      trailing: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(providr.tasks[i]['time']),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(providr.tasks[i]['date']),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-
-                  // (_selectedIndex == i)
-                  //     ? Padding(
-                  //         padding: const EdgeInsets.all(8.0),
-                  //         child: Divider(
-                  //           color: Colors.grey,
-                  //           thickness: 1,
-                  //         ),
-                  //       )
-                  //     : Container()
                 ),
-              ),
-              separatorBuilder: (ctx, i) => Divider(thickness: 1),
-              itemCount: providr.tasks.length,
-            ),
-          ),
+                separatorBuilder: (ctx, i) => Container(
+                  padding: EdgeInsets.only(top: 0),
+                  decoration: BoxDecoration(
+                      border: Border(
+                    bottom: BorderSide(color: Colors.grey, width: 0.5),
+                  )),
+                ),
+                itemCount: providr.tasks.length,
+              )),
           Container(
             padding: EdgeInsets.only(top: 10, left: 10),
             width: double.infinity,
@@ -346,35 +368,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-// Dismissible(
-                    
-                    
-//                     onDismissed: (dirction) {
-//                       providr.deleteTask(providr.tasks[i]['id']);
-//                     },
-//                     direction: DismissDirection.startToEnd,
-//                     confirmDismiss: (direction) {
-//                       return showDialog(
-//                         context: context,
-//                         builder: (ctx) => AlertDialog(
-//                           title: Text('Are you sure'),
-//                           content: Text('Do you want to remove this task?'),
-//                           actions: [
-//                             TextButton(
-//                               child: Text('No'),
-//                               onPressed: () {
-//                                 Navigator.of(context).pop();
-//                               },
-//                             ),
-//                             TextButton(
-//                               child: Text('Yes'),
-//                               onPressed: () {
-//                                 Navigator.of(context).pop(true);
-//                               },
-//                             ),
-//                           ],
-//                         ),
-//                       );
-//                     },
-                    
