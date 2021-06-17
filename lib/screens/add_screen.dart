@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/screens/setting_screen.dart';
 
+import '../screens/setting_screen.dart';
 import '../providers/database.dart';
 
 class AddScreen extends StatefulWidget {
@@ -11,6 +11,12 @@ class AddScreen extends StatefulWidget {
 }
 
 class _AddScreenState extends State<AddScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _timeController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _dateController = TextEditingController();
+  final _placeController = TextEditingController();
+
   Future<void> _submit(
     String cat,
     String title,
@@ -31,8 +37,6 @@ class _AddScreenState extends State<AddScreen> {
       );
       Navigator.of(context).pop();
     }
-    print('submit');
-    print(_titleController.text);
   }
 
   TextFormField textField({
@@ -70,11 +74,7 @@ class _AddScreenState extends State<AddScreen> {
     "Other",
   ];
   String dropdownValue = "Personal";
-  final _formKey = GlobalKey<FormState>();
-  final _timeController = TextEditingController();
-  final _titleController = TextEditingController();
-  final _dateController = TextEditingController();
-  final _placeController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Consumer<DatabaseHelper>(

@@ -68,7 +68,6 @@ class DatabaseHelper with ChangeNotifier {
   }
 
   void getDoneDatabase(Database database) {
-    doneTasks = [];
     database
         .rawQuery('SELECT * FROM tasks WHERE status = "Done" ORDER BY id DESC')
         .then((value) {
@@ -106,39 +105,6 @@ class DatabaseHelper with ChangeNotifier {
     getDoneDatabase(database);
     print('update = $updated');
     notifyListeners();
-    // if (isClicked == false) {
-    //   int updated = await database.rawUpdate(
-    //     'UPDATE tasks SET complete = ? WHERE id = ?',
-    //     [
-    //       1,
-    //       id,
-    //     ],
-    //   );
-    //   getDatabase(database);
-    //   notifyListeners();
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //         content: Container(
-    //       child: Text('Task Completed'),
-    //     )),
-    //   );
-    // } else {
-    //   int updated = await database.rawUpdate(
-    //     'UPDATE tasks SET complete = ? WHERE id = ?',
-    //     [
-    //       0,
-    //       id,
-    //     ],
-    //   );
-    //   getDatabase(database);
-    //   notifyListeners();
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //         content: Container(
-    //       child: Text('Task UnCompleted'),
-    //     )),
-    //   );
-    // }
   }
 
   Future<int> getCompleteCount() async {
