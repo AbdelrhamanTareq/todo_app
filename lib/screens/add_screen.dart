@@ -83,7 +83,7 @@ class _AddScreenState extends State<AddScreen> {
         appBar: AppBar(
           backgroundColor: Colors.deepPurple,
           elevation: 0,
-          title: Text('Add new things'),
+          title: const Text('Add new things'),
           centerTitle: true,
           actions: [
             Padding(
@@ -133,7 +133,6 @@ class _AddScreenState extends State<AddScreen> {
                             value: value,
                             child: Icon(
                               value,
-                              color: Colors.cyan,
                               size: 35,
                             ),
                           );
@@ -141,8 +140,6 @@ class _AddScreenState extends State<AddScreen> {
                       ),
                     ),
                   ),
-
-                  //  Icon(Icons.inbox_sharp, color: Colors.cyan),
                 ),
               ),
               SizedBox(height: 50),
@@ -159,7 +156,7 @@ class _AddScreenState extends State<AddScreen> {
                           iconDisabledColor: Colors.white,
                           style: TextStyle(color: Colors.white),
                           value: dropdownValue,
-                          hint: Text(
+                          hint: const Text(
                             "Category",
                           ),
                           onChanged: (String newValue) {
@@ -261,7 +258,7 @@ class _AddScreenState extends State<AddScreen> {
                               _timeController.text,
                               _dateController.text,
                             ),
-                            child: Text(
+                            child: const Text(
                               'ADD YOUR THINGS',
                               style: TextStyle(color: Colors.white),
                             ),

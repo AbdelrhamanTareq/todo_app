@@ -16,8 +16,15 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-            primarySwatch: Colors.blue,
+            primarySwatch: Colors.deepPurple,
             appBarTheme: AppBarTheme(
+              backgroundColor: Colors.deepPurple,
+            ),
+            iconTheme: IconThemeData(
+              color: Colors.cyan,
+              size: 35,
+            ),
+            floatingActionButtonTheme: FloatingActionButtonThemeData(
               backgroundColor: Colors.deepPurple,
             )),
         home: HomePage(),

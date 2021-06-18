@@ -7,6 +7,7 @@ class DrawerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
+        color: Colors.black,
         padding: EdgeInsets.symmetric(vertical: 120, horizontal: 10),
         child: Column(
           children: [
@@ -24,14 +25,14 @@ class DrawerWidget extends StatelessWidget {
                     Icon(
                       Icons.done_rounded,
                       size: 35,
-                      color: Colors.deepPurple,
+                      color: Colors.cyan,
                     ),
                     SizedBox(
                       width: 20,
                     ),
                     Text(
                       'Done',
-                      style: TextStyle(fontSize: 25, color: Colors.deepPurple),
+                      style: TextStyle(fontSize: 25, color: Colors.cyan),
                     ),
                   ],
                 ),
@@ -52,14 +53,14 @@ class DrawerWidget extends StatelessWidget {
                     Icon(
                       Icons.settings,
                       size: 35,
-                      color: Colors.deepPurple,
+                      color: Colors.cyan,
                     ),
                     SizedBox(
                       width: 20,
                     ),
                     Text(
                       'Settings',
-                      style: TextStyle(fontSize: 25, color: Colors.deepPurple),
+                      style: TextStyle(fontSize: 25, color: Colors.cyan),
                     ),
                   ],
                 ),
