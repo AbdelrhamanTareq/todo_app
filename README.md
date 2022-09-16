@@ -1,16 +1,25 @@
-# todo_app
+## todo_app
 
-A new Flutter project.
+# A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+# This is a to do tasks app implement wiht flutter and dart with provider as state management and sqflite for local database
 
-A few resources to get you started if this is your first Flutter project:
+## features
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+<li> Add tasks and delete it
+<li> Done tasks
+<li> Track yours tasks
+<li> Prsonal tasks, business tasks and other taskes
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+  
+<div>
+  <img src="https://user-images.githubusercontent.com/32137323/190626217-998f2bb1-1f4a-4503-8912-36e0e678b699.jpeg" width="500">
+  <img src="https://user-images.githubusercontent.com/32137323/190626305-5a88c0e9-52c4-4e44-92a2-e2d70a7555e8.jpeg" width="500">
+  <img src="https://user-images.githubusercontent.com/32137323/190626361-0ca38aba-d381-4d86-91b1-f1ce21a382a3.jpeg" width="500">
+  <img src="https://user-images.githubusercontent.com/32137323/190626429-93713725-f46a-4dce-b68d-f057c158ba58.jpeg" width="500">
+  <img src="https://user-images.githubusercontent.com/32137323/190626531-cea72bc1-04d8-427e-ba40-887117c998ce.jpeg" width="500">
+  <img src="https://user-images.githubusercontent.com/32137323/190626610-219d8e4e-45b8-4b96-b360-0d717c5eff3f.jpeg" width="500">
+ </div>
